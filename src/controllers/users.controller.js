@@ -6,7 +6,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 
 const generateAccessAndRefreshToken = async (userId) => {
   try {
-    const user = await user.findById(userId);
+    const user = await User.findById(userId);
     const accessToken = user.generateAccessToken();
     const refreshToken = user.generateRefreshToken();
 
@@ -35,7 +35,7 @@ const registerUser = asynHandler(async (req, res) => {
     $or: [{ username }, { email }],
   });
   if (existingUser) {
-    throw new ApiError(400, "Username or Email already exists !");
+    throw new ApiError(400, "username or email already exists !");
   }
 
   // Localfile path checking
@@ -70,7 +70,7 @@ const registerUser = asynHandler(async (req, res) => {
 
   if (!resgistereduser) {
     throw new ApiError(400, "something went wrong while registering the user");
-  }
+  } 
   return res
     .status(201)
     .json(
@@ -80,12 +80,12 @@ const registerUser = asynHandler(async (req, res) => {
 
 const userLogin = asynHandler(async (req, res) => {
   const { username, email, password } = req.body;
-  if (!username || !email) {
+  if (!(username || email)) {
     throw new ApiError(400, "Please Enter username or email");
   }
 
   const user = await User.findOne({
-    $or: [{ username }, { email }],
+    $or: [{username}, {email}],
   });
 
   if (!user) {
